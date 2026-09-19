@@ -2,8 +2,13 @@
   box-sizing: border-box;
 }
 
+/* Flex column so #main fills exactly the space below the header — with a bare
+   `#main { min-height: 100vh }` the page overflowed by the header's height. */
 body {
   margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background: #333333;
   color: #cccccc;
   font-family: 'Roboto', sans-serif;
@@ -26,14 +31,16 @@ body {
 #controls-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   justify-self: start;
 }
 
 #controls label {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 #controls button:disabled {
@@ -46,6 +53,78 @@ body {
   align-items: center;
   gap: 12px;
   justify-self: end;
+}
+
+#speech-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.speech-btn {
+  padding: 6px 12px;
+  border: 1px solid #666666;
+  border-radius: 6px;
+  background: transparent;
+  color: #cccccc;
+  font: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.speech-btn:hover {
+  border-color: #999999;
+  color: #ffffff;
+}
+
+.speech-btn[aria-pressed='true'] {
+  background: #444444;
+  border-color: #999999;
+  color: #ffffff;
+}
+
+/* CAI switch: the real checkbox stays in the DOM (same id, same `change`
+   event) but is visually hidden; the sibling .switch span draws the pill. */
+.switch-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+}
+
+.switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: #555555;
+  transition: background 150ms;
+  flex-shrink: 0;
+}
+
+.switch::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: transform 150ms;
+}
+
+.switch-input:checked + .switch {
+  background: #4ade80;
+}
+
+.switch-input:checked + .switch::before {
+  transform: translateX(20px);
+}
+
+.switch-input:focus-visible + .switch {
+  outline: 2px solid #cccccc;
+  outline-offset: 2px;
 }
 
 #help-btn {
@@ -69,18 +148,17 @@ body {
 #player {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   background: #222222;
   border: 1px solid #444444;
   border-radius: 999px;
-  padding: 6px 16px 6px 6px;
-  width: 420px;
+  padding: 6px 20px 6px 8px;
   max-width: 100%;
   justify-self: center;
 }
 
 #main {
-  min-height: 100vh;
+  flex: 1;
   position: relative;
 }
 
@@ -103,49 +181,26 @@ body {
   background: #ffffff;
 }
 
+#player #stop-btn {
+  background: #e04848;
+  color: #ffffff;
+}
+
+#player #stop-btn:hover {
+  background: #ef6a6a;
+}
+
 .icon-hidden {
   display: none;
 }
 
-#stop-btn {
-  width: 26px !important;
-  height: 26px !important;
-  background: transparent !important;
-  color: #cccccc !important;
-  border: 1px solid #666666 !important;
-}
-
-#stop-btn:hover {
-  color: #ffffff !important;
-  border-color: #999999 !important;
-}
-
-#time-current,
-#time-duration {
+#time {
   font-variant-numeric: tabular-nums;
   font-size: 0.85em;
   color: #999999;
+  white-space: nowrap;
   flex-shrink: 0;
-  min-width: 2.6em;
-}
-
-#time-current {
-  text-align: right;
-}
-
-#progress-track {
-  flex: 1;
-  height: 4px;
-  background: #444444;
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-#progress-fill {
-  height: 100%;
-  width: 0%;
-  background: #cccccc;
-  border-radius: 2px;
+  margin-left: 4px;
 }
 
 #icon-volume {
@@ -154,26 +209,25 @@ body {
 }
 
 #volume-slider {
-  width: 70px;
+  width: 90px;
   flex-shrink: 0;
   accent-color: #cccccc;
   cursor: pointer;
 }
 
 /* Fade/slide timings here must match POPUP_FADE_IN_MS / POPUP_FADE_OUT_MS in
-   js/config.js. Positioned bottom-right of #main (not the header) and styled
-   like a chat/toast notification bubble. */
+   js/config.js. Positioned top-right of #main (just below the header) and
+   styled like a chat/toast notification bubble with a green glow. */
 #popup {
-  position: fixed;
-  bottom: 24px;
+  position: absolute;
+  top: 24px;
   right: 24px;
   max-width: 320px;
   padding: 12px 16px;
   background: #222222;
-  border: 1px solid #555555;
-  border-left: 4px solid #4ade80;
+  border: 2px solid #4ade80;
   border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 0 14px rgba(74, 222, 128, 0.45), 0 8px 24px rgba(0, 0, 0, 0.45);
   opacity: 0;
   transform: translateY(16px);
   transition: opacity 300ms, transform 300ms;
@@ -278,20 +332,29 @@ body {
     flex-wrap: wrap;
   }
 
+  #speech-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
   #player {
     width: 100%;
     justify-content: center;
   }
 
-  #progress-track {
+  #volume-slider {
     min-width: 0;
+    flex-shrink: 1;
   }
 
   /* Bump tap targets to ~44px for touch; desktop keeps the tighter sizing. */
-  #help-btn,
-  #stop-btn {
+  #help-btn {
     width: 38px;
     height: 38px;
+  }
+
+  .speech-btn {
+    min-height: 38px;
   }
 
   #player button {
@@ -304,9 +367,9 @@ body {
   }
 
   #popup {
+    top: 16px;
     left: 16px;
     right: 16px;
-    bottom: 16px;
     max-width: 320px;
     margin-left: auto;
   }

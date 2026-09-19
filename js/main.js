@@ -6,8 +6,9 @@ import { Scheduler } from './scheduler.js';
 import { PopupManager } from './popupManager.js';
 import { Logger } from './logger.js';
 
-const speechSelect = document.getElementById('speech-select');
+const speechButtons = document.querySelectorAll('.speech-btn');
 const caiToggle = document.getElementById('cai-toggle');
+const caiLabel = document.getElementById('cai-label');
 const playPauseBtn = document.getElementById('play-pause-btn');
 const iconPlay = document.getElementById('icon-play');
 const iconPause = document.getElementById('icon-pause');
@@ -17,7 +18,6 @@ const popupEl = document.getElementById('popup');
 const audioEl = document.getElementById('audio-el');
 const timeCurrentEl = document.getElementById('time-current');
 const timeDurationEl = document.getElementById('time-duration');
-const progressFillEl = document.getElementById('progress-fill');
 const volumeSlider = document.getElementById('volume-slider');
 const helpBtn = document.getElementById('help-btn');
 const helpOverlay = document.getElementById('help-overlay');
@@ -26,6 +26,7 @@ const helpCloseBtn = document.getElementById('help-close-btn');
 const audioPlayer = new AudioPlayer(audioEl);
 const popupManager = new PopupManager(popupEl);
 
+let currentSpeech = 'warmup';
 let markers = [];
 let scheduler = null;
 let logger = null;
@@ -50,16 +51,12 @@ function updatePlayPauseIcon() {
   // no-op. classList works on any Element.
   iconPlay.classList.toggle('icon-hidden', playing);
   iconPause.classList.toggle('icon-hidden', !playing);
-  playPauseBtn.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+  playPauseBtn.setAttribute('aria-label', playing ? 'Pausa' : 'Riproduci');
 }
 
 function updateTimeDisplay() {
   timeCurrentEl.textContent = formatTime(audioPlayer.currentTime);
   timeDurationEl.textContent = formatTime(audioPlayer.duration);
-  const pct = audioPlayer.duration
-    ? (audioPlayer.currentTime / audioPlayer.duration) * 100
-    : 0;
-  progressFillEl.style.width = `${pct}%`;
 }
 
 audioPlayer.onPlay(updatePlayPauseIcon);
@@ -110,7 +107,17 @@ function loadSpeech(key) {
   updateTimeDisplay();
 }
 
-speechSelect.addEventListener('change', () => loadSpeech(speechSelect.value));
+// Clicking the already-loaded speech is a no-op, mirroring the old <select>
+// (which fired no `change` for the same value) — no reload, no auto-download.
+speechButtons.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.speech;
+    if (key === currentSpeech) return;
+    currentSpeech = key;
+    speechButtons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    loadSpeech(key);
+  });
+});
 
 playPauseBtn.addEventListener('click', () => {
   if (audioPlayer.paused) {
@@ -127,6 +134,7 @@ stopBtn.addEventListener('click', () => {
 });
 
 caiToggle.addEventListener('change', () => {
+  caiLabel.textContent = `Modalità CAI: ${caiToggle.checked ? 'ON' : 'OFF'}`;
   if (caiToggle.checked) {
     if (!audioPlayer.paused) startCAI();
   } else {
@@ -160,4 +168,4 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && !helpOverlay.classList.contains('hidden')) closeHelp();
 });
 
-loadSpeech(speechSelect.value);
+loadSpeech(currentSpeech);

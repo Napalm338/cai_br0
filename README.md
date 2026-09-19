@@ -26,16 +26,20 @@ Then open `http://localhost:8000/`.
 
 ## Usage
 
-- **Speech select** — pick a speech (Warm-Up, Discorso 1, Discorso 2).
-  Switching speeches downloads any unsaved log for the outgoing speech first.
-- **CAI toggle** — On: popups show synced text cues, render latency is
-  logged. Off: plain audio, no popups, nothing logged. Live — takes effect
-  immediately, even mid-playback.
-- **Player** — Play/Pause, Stop (halts and resets to start), progress bar,
-  volume.
+UI text is in Italian.
+
+- **Speech buttons** — pick a speech (Warm-Up, Discorso 1, Discorso 2); the
+  loaded one is highlighted. Switching speeches downloads any unsaved log for
+  the outgoing speech first.
+- **Modalità CAI switch** — ON: popups (top-right) show synced text cues,
+  render latency is logged. OFF: plain audio, no popups, nothing logged.
+  Live — takes effect immediately, even mid-playback.
+- **Player** — Play/Pause, Stop (halts and resets to start), elapsed /
+  total time, volume.
 - **Help (`?`)** — opens a modal explaining each control.
-- **Download CSV** — downloads the current speech's log (render time, marker
-  text, audio time, latency). Enabled once something's been logged.
+- **Scarica Log (Test concluso)** — downloads the current speech's log as CSV
+  (render time, marker text, audio time, latency). Enabled once something's
+  been logged.
 
 ## Project layout
 

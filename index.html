@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CAI A/B Test</title>
+  <title>Test CAI A/B</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
@@ -11,32 +11,33 @@
 <body>
   <div id="controls">
     <div id="controls-left">
-      <select id="speech-select">
-        <option value="warmup">Warm-Up</option>
-        <option value="discorso1">Discorso 1</option>
-        <option value="discorso2">Discorso 2</option>
-      </select>
+      <div id="speech-buttons" role="group" aria-label="Discorso">
+        <button class="speech-btn" data-speech="warmup" aria-pressed="true">Warm-Up</button>
+        <button class="speech-btn" data-speech="discorso1" aria-pressed="false">Discorso 1</button>
+        <button class="speech-btn" data-speech="discorso2" aria-pressed="false">Discorso 2</button>
+      </div>
 
       <label>
-        <input type="checkbox" id="cai-toggle" />
-        CAI
+        <input type="checkbox" id="cai-toggle" class="switch-input" />
+        <span class="switch" aria-hidden="true"></span>
+        <span id="cai-label">Modalità CAI: OFF</span>
       </label>
     </div>
 
     <div id="player">
-      <button id="play-pause-btn" aria-label="Play">
+      <button id="play-pause-btn" aria-label="Riproduci">
         <svg id="icon-play" viewBox="0 0 16 16" width="16" height="16"><path d="M3 1.5v13l11-6.5z" fill="currentColor"/></svg>
         <svg id="icon-pause" class="icon-hidden" viewBox="0 0 16 16" width="16" height="16"><path d="M3 1.5h3.5v13H3zM9.5 1.5H13v13H9.5z" fill="currentColor"/></svg>
       </button>
       <button id="stop-btn" aria-label="Stop">
-        <svg viewBox="0 0 16 16" width="14" height="14"><rect x="2.5" y="2.5" width="11" height="11" fill="currentColor"/></svg>
+        <svg viewBox="0 0 16 16" width="12" height="12"><rect x="2.5" y="2.5" width="11" height="11" rx="1" fill="currentColor"/></svg>
       </button>
 
-      <span id="time-current">0:00</span>
-      <div id="progress-track">
-        <div id="progress-fill"></div>
-      </div>
-      <span id="time-duration">0:00</span>
+      <span id="time">
+        <span id="time-current">0:00</span>
+        <span class="time-sep">/</span>
+        <span id="time-duration">0:00</span>
+      </span>
 
       <svg id="icon-volume" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
         <path d="M2 6h2.5L8 3v10L4.5 10H2z" fill="currentColor"/>
@@ -46,8 +47,8 @@
     </div>
 
     <div id="controls-right">
-      <button id="help-btn" aria-label="Help">?</button>
-      <button id="download-btn" disabled>Download CSV</button>
+      <button id="help-btn" aria-label="Guida">?</button>
+      <button id="download-btn" disabled>Scarica Log (Test concluso)</button>
     </div>
   </div>
 
@@ -58,21 +59,21 @@
   <div id="help-overlay" class="hidden">
     <div id="help-panel" role="dialog" aria-modal="true" aria-labelledby="help-title">
       <div id="help-panel-header">
-        <h2 id="help-title">Help</h2>
-        <button id="help-close-btn" aria-label="Close">&times;</button>
+        <h2 id="help-title">Guida</h2>
+        <button id="help-close-btn" aria-label="Chiudi">&times;</button>
       </div>
       <dl id="help-list">
-        <dt>Speech</dt>
-        <dd>Pick a speech to load. Switching speeches downloads any unsaved log first.</dd>
+        <dt>Discorso</dt>
+        <dd>Scegli il discorso da caricare. Cambiando discorso, il log non ancora scaricato viene scaricato automaticamente.</dd>
 
-        <dt>CAI toggle</dt>
-        <dd>On: popups show synced text cues and log every render's timing. Off: plain audio, no popups, nothing logged. Works mid-playback.</dd>
+        <dt>Modalità CAI</dt>
+        <dd>ON: i popup mostrano i cue sincronizzati e ogni visualizzazione viene registrata con i suoi tempi. OFF: solo audio, nessun popup, nessuna registrazione. Funziona anche durante la riproduzione.</dd>
 
-        <dt>Play / Pause / Stop / Progress bar / Volume</dt>
-        <dd>Play/Pause starts or pauses playback. Stop halts and resets to the start. The progress bar shows and sets position. The volume slider sets volume.</dd>
+        <dt>Play / Pausa / Stop / Volume</dt>
+        <dd>Play/Pausa avvia o mette in pausa la riproduzione. Stop interrompe e riporta all'inizio. Il cursore regola il volume. Accanto: tempo trascorso / durata totale.</dd>
 
-        <dt>Download CSV</dt>
-        <dd>Downloads the current speech's log (render time, marker text, audio time, latency) as CSV. Enabled once something's been logged.</dd>
+        <dt>Scarica Log (Test concluso)</dt>
+        <dd>Scarica in CSV il log del discorso corrente (ora di visualizzazione, testo del cue, tempo audio, latenza). Attivo appena è stata registrata almeno una riga.</dd>
       </dl>
     </div>
   </div>
